@@ -30,7 +30,7 @@ const Counter : React.FC<CounterProps> = ({initCount}) => {
             <h4> Count: {count} </h4>
             <div>
                 <button onClick={inc}>++</button> &nbsp;                
-                <button onClick={() => setCount(count - 1)}>--</button> &nbsp;  {/* using an inline arrow function to decrement the count */}
+                <button onClick={() => setCount(count - 1)}>--</button> &nbsp; <br></br> {/* using an inline arrow function to decrement the count */}
                 <input type="number" value={count} placeholder="Please enter count" onChange={handleOnChange} />  {/*  allowing the user to input a number to set the count, using an inline arrow function */}
             </div>
         </div>

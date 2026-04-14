@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 
 type CounterProps = {
     initCount : number
@@ -10,8 +10,11 @@ const Counter : React.FC<CounterProps> = ({initCount}) => {
 
     const [count, setCount] = useState(initCount); //  managing the state with useState hook
 
+    useEffect(() => {
+        console.log("Count value changed: ", count); // this will be executed very first time and when the count is incremented. This is depenedent on the counte variable state.
+    },[count])
+
     function inc(){
-        console.log("Incrementing the count");
         setCount(count + 1);
         setCount(count + 1); // even if we call setCount twice, the count will only increment by 1, as the state updates are batched together        
 

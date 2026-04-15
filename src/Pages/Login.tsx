@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import axios, { Axios } from "axios";
 import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { useTitle } from "../hooks/useTitle";
 
 
 function LoginPage() {
@@ -10,11 +12,13 @@ function LoginPage() {
     const [message, setMessage] = useState(""); // creating a state variable to set the message value
     const usernameInputRef = useRef<HTMLInputElement>(null); // creating a state variable to set the reference of the username input field
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    useTitle("Login"); // using the custom hook to set the title of the page to "Login". Using custom hook
 
     // invoked on mounted
     useEffect(() => {
         console.log("LoginPage component mounted");
-        usernameInputRef.current?.focus(); // to set the focus on the username input field when the login button is clicked
+        usernameInputRef.current?.focus(); // to set the focus on the username input field when the login button is clicked        
         
         return () => {
             console.log("LoginPage component unmounted");
@@ -34,9 +38,21 @@ function LoginPage() {
                 const response = await axios.post(url, {name: username, password: password}); // making a post request to the server with the username and password as the request body
                 console.log("Response from server: ", response);
                 setMessage(""); // if credentials are valid then clear the message
+
+                dispatch({
+                    type: "login",
+                    payload: {
+                        isAuthenticated: true,
+                        username: username,
+                        accessToken: response.data.accessToken,
+                        refreshToken: response.data.refreshToken
+                    }
+                }); // dispatching the action to update the auth state in the redux store
+
                 navigate("/"); // if the credentials are valid then navigate to the home page
             } catch(error){
                 console.log("Error while logging in: ", error);
+                dispatch({type: "logout"}); // if there is an error while logging in then dispatch the logout action to clear the auth state in the redux store
             }            
 
             

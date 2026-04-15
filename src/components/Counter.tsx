@@ -1,4 +1,5 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { current } from "@reduxjs/toolkit";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 
 type CounterProps = {
     initCount : number
@@ -9,6 +10,7 @@ type CounterProps = {
 const Counter : React.FC<CounterProps> = ({initCount}) => {
 
     const [count, setCount] = useState(initCount); //  managing the state with useState hook
+    const clickCount = useRef(0); // using useRef to keep track of the number of times the button is clicked, without causing a re-render of the component
 
     useEffect(() => {
         console.log("Count value changed: ", count); // this will be executed very first time and when the count is incremented. This is depenedent on the counte variable state.
@@ -21,6 +23,8 @@ const Counter : React.FC<CounterProps> = ({initCount}) => {
         setCount((count) => count + 1); // this will increment the count by 1, as we are using the functional form of setState, which takes the previous state as an argument
         setCount((count) => count + 1); // calling it twice will increment the count by 2, as we are using the callback, which will be executed after the state has been updated
         console.log("Count after increment: ", count); // this will not update the UI, as initCount is not a state variable
+        clickCount.current += 1;
+        console.log("Button clicked: ", clickCount.current, " times"); // this will log the number of times the button is clicked, without causing a re-render of the component
     }
 
     // since the form field value is changed via state. The state also needs to be updated to avoid (onChange error)

@@ -3,30 +3,21 @@ import { useEffect, useState } from "react";
 import type { Product } from "../model/Product";
 import "./ListProducts.css";
 import { Navigate, useNavigate } from "react-router";
+import { useSelector } from "react-redux";
+import type { AppState } from "../redux/store";
+import { useTitle } from "../hooks/useTitle";
+import { useProducts } from "../hooks/useProducts";
+import { ProductView } from "../components/ProductView";
 
 
 
 function ListProductsPage() {
 
+    const url = "http://localhost:9000/secure_products";
     const navigate = useNavigate();
-
-    const [products, setProducts] = useState<Product[]>([]); // creating a state variable to set the products value
-
-    useEffect(() => {
-        console.log("ListProducts component mounted");
-        fetchProducts();
-
-    },[]); // this will be executed only once when the component is mounted
-
-    async function fetchProducts(){
-        try{
-               const response = await axios.get<Product[]>("http://localhost:9000/products");
-               setProducts(response.data); // setting the products state variable with the data received from the server
-
-        } catch(error){
-            console.log("Error while fetching products: ", error);
-        }
-    }
+    const {products, setProducts} = useProducts(url); // fetching products using custom hook. This will return the products array. Note the curly braces, which means that total state is being returned as a object 
+    useTitle("List Products"); // using the custom hook to set the title of the page to "List Products". Using custom hook
+    const [isMessageVisible, setIsMessageVisible] = useState(true);
 
     async function handleDelete(product: Product){
         try{
@@ -50,26 +41,20 @@ function ListProductsPage() {
     return (
         <div>
             <h3>List of Products</h3>
+
+        {isMessageVisible? <div>Demo for List products</div>: null}
+
+        <br></br>
+        <button className="btn btn-info" onClick={() => setIsMessageVisible(!isMessageVisible)} >
+            {isMessageVisible? "Hide Message": "Show Message"}
+        </button>
+
+
             {/* Below div is for adding styles to the products. Note that attributes names are in camelcase but in normal css file it is flex-flow. */}
             <div style={{display:'flex', flexFlow: 'row wrap',justifyContent:'center'}}>
                 {/* below is the logic for for loop the elements */}
                 {products.map(product => {
-                    return (
-                        <div className ="product" key={product.id}>
-                            <img src={`http://localhost:9000${product.imageUrl}`} alt={product.name} height="50px" /> {/* displaying the product image */}
-                                <p>ID: {product.id}</p>
-                                <p>Name: {product.name}</p>
-                                <p>Price: {product.price}</p>
-                                <p>Description: {product.description}</p>
-                                <p>Image URL: {product.imageUrl}</p>
-                                <div>
-                                     {/* Since we cannot send the args directly to the handler, we can use arrow function which will tell that this needs function call. */}
-                                    <button className="btn btn-danger" onClick={() => {handleDelete(product)}}>Delete</button> &nbsp;
-                                    <button className="btn btn-info" onClick={() => {handleEdit(product)}}>Edit</button>
-                                    
-                                </div>
-                        </div>
-                    )
+                    return <ProductView key={product.id} product={product}/>;
                 }
 
                 )}

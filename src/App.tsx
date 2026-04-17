@@ -3,11 +3,11 @@ import AppBar from './components/AppBar'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Counter from './components/Counter'
 import LoginPage from './Pages/Login'
-import ListProducts from './Pages/ListProducts'
 import ListProductsPage from './Pages/ListProducts'
 import EditProduct from './Pages/EditProduct'
 import ViewCartpage from './Pages/ViewCart'
 import GadgetStorepage from './Pages/GadgetStore'
+import ProtectedRouting from './components/ProtectedRouting'
 
 function App() {
 
@@ -20,11 +20,11 @@ function App() {
             <main>
               <Routes>
                 <Route path="/" element={<Counter initCount={5} />} />
-                <Route path="/products" element={<ListProductsPage />} />
+                <Route path="/products" element={<ProtectedRouting><ListProductsPage /></ProtectedRouting>} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path='/products/:id' element={<EditProduct />} />
-                <Route path='/gadgets' element={<GadgetStorepage />} />
-                <Route path='/viewcart' element={<ViewCartpage />} />
+                <Route path='/gadgets' element={<ProtectedRouting><GadgetStorepage /></ProtectedRouting>} />
+                <Route path='/viewcart' element={<ProtectedRouting><ViewCartpage /></ProtectedRouting>} />
               </Routes>
             </main>
         </div>

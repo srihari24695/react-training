@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Product } from "../model/Product";
 import "./ListProducts.css";
 import { Navigate, useNavigate } from "react-router";
@@ -19,29 +19,52 @@ function ListProductsPage() {
     useTitle("List Products"); // using the custom hook to set the title of the page to "List Products". Using custom hook
     const [isMessageVisible, setIsMessageVisible] = useState(true);
 
-    async function handleDelete(product: Product){
+    // async function handleDelete(product: Product){
+    //     try{
+    //         const url = `http://localhost:9000/products/${product.id}`;
+    //         await axios.delete(url); // making a delete request to the server with the product id as the request parameter
+    //        // await fetchProducts(); // after deleting the product, we need to fetch the products again to update the UI . This is one way to do it.
+    //        const index = products.findIndex(item => item.id === product.id); // finding the index of the product to be deleted in the products array
+    //        products.splice(index, 1); // removing the product from the products array
+    //        setProducts([...products]); // updating the products state variable with the new products array, using the spread operator to create a new array with the updated products
+    //     } catch(error){
+    //         console.log("Error while deleting product: ", error);
+    //     }
+    // }
+
+    const onProductDelete =  useCallback((product: Product) => {
         try{
-            const url = `http://localhost:9000/products/${product.id}`;
-            await axios.delete(url); // making a delete request to the server with the product id as the request parameter
-           // await fetchProducts(); // after deleting the product, we need to fetch the products again to update the UI . This is one way to do it.
+           console.log("onproductDelete called");
            const index = products.findIndex(item => item.id === product.id); // finding the index of the product to be deleted in the products array
            products.splice(index, 1); // removing the product from the products array
            setProducts([...products]); // updating the products state variable with the new products array, using the spread operator to create a new array with the updated products
         } catch(error){
             console.log("Error while deleting product: ", error);
         }
-    }
+    },[products])
 
-    async function handleEdit(product: Product){
+
+    const handleEdit = useCallback((product: Product) => {
         console.log("Edit button clicked for product id: ", product.id);
         navigate('/products/' + product.id, {state: {product}}); // navigating to the edit product page with the product id as the url parameter
-    }
+    },[])
+
+    const calculateTotalPrice = useMemo(() =>{
+        var total = 0;
+        console.log('calling calculate price function');
+        products.forEach(p => {
+            if(p.price){
+                total += p.price;
+            }
+        })
+        return total;
+    },[products])
 
 
     return (
         <div>
             <h3>List of Products</h3>
-
+        <div>Total Price: {calculateTotalPrice}</div>
         {isMessageVisible? <div>Demo for List products</div>: null}
 
         <br></br>
@@ -54,7 +77,7 @@ function ListProductsPage() {
             <div style={{display:'flex', flexFlow: 'row wrap',justifyContent:'center'}}>
                 {/* below is the logic for for loop the elements */}
                 {products.map(product => {
-                    return <ProductView key={product.id} product={product}/>;
+                    return <ProductView key={product.id} product={product} onDelete={onProductDelete} onEdit={handleEdit}/>;
                 }
 
                 )}

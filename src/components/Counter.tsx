@@ -1,5 +1,5 @@
 import { current } from "@reduxjs/toolkit";
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useEffectEvent, useRef, useState, type ChangeEvent } from "react";
 
 type CounterProps = {
     initCount : number
@@ -15,6 +15,16 @@ const Counter : React.FC<CounterProps> = ({initCount}) => {
     useEffect(() => {
         console.log("Count value changed: ", count); // this will be executed very first time and when the count is incremented. This is depenedent on the counte variable state.
     },[count])
+
+    useEffect (() => {
+        setInterval(() => {
+                console.log("count from the setinterval", count)
+        }, 1000);
+    },[]);
+
+    useEffectEvent(() => {
+        console.log("calling use effect event", count);
+    });
 
     function inc(){
         setCount(count + 1);

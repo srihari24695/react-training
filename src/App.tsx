@@ -5,9 +5,12 @@ import Counter from './components/Counter'
 import LoginPage from './Pages/Login'
 import ListProductsPage from './Pages/ListProducts'
 import EditProduct from './Pages/EditProduct'
-import ViewCartpage from './Pages/ViewCart'
+//import ViewCartpage from './Pages/ViewCart'
 import GadgetStorepage from './Pages/GadgetStore'
 import ProtectedRouting from './components/ProtectedRouting'
+import React, { Suspense } from 'react'
+
+const ViewCartpage = React.lazy(() => import( "./Pages/ViewCart")); // making the component invoke when it is clicked instead of on load everytime
 
 function App() {
 
@@ -18,6 +21,7 @@ function App() {
               <AppBar />
             </header>
             <main>
+              <Suspense>
               <Routes>
                 <Route path="/" element={<Counter initCount={5} />} />
                 <Route path="/products" element={<ProtectedRouting><ListProductsPage /></ProtectedRouting>} />
@@ -26,6 +30,7 @@ function App() {
                 <Route path='/gadgets' element={<ProtectedRouting><GadgetStorepage /></ProtectedRouting>} />
                 <Route path='/viewcart' element={<ProtectedRouting><ViewCartpage /></ProtectedRouting>} />
               </Routes>
+              </Suspense>
             </main>
         </div>
       </Router>
